@@ -48,16 +48,10 @@ struct ContentView: View {
         NavigationStack {
             List {
                 ForEach(expenses.items) { item in
-                    HStack {
-                        VStack(alignment: .leading) {
-                            Text(item.name)
-                                .font(.headline)
-                            Text(item.type)
-                        }
-                        
-                        Spacer()
-                        Text(item.amount, format: .currency(code: expenses.localCurrency))
-                    }
+                    ExpenseRowView(
+                        item: item,
+                        localCurrency: expenses.localCurrency
+                    )
                 }
                 .onDelete(perform: removeItems)
             }
