@@ -24,6 +24,10 @@ class Expenses {
         }
     }
     
+    var localCurrency: String {
+        Locale.current.currency?.identifier ?? "USD"
+    }
+    
     init() {
         if let savedItems = UserDefaults.standard.data(forKey: "Items") {
             if let decodedItems = try? JSONDecoder().decode([ExpenseItem].self, from: savedItems) {
@@ -52,7 +56,7 @@ struct ContentView: View {
                         }
                         
                         Spacer()
-                        Text(item.amount, format: .currency(code: "USD"))
+                        Text(item.amount, format: .currency(code: expenses.localCurrency))
                     }
                 }
                 .onDelete(perform: removeItems)
