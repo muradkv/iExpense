@@ -11,10 +11,8 @@ struct AddView: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var name = ""
-    @State private var type = "Personal"
+    @State private var type = ExpenseType.personal
     @State private var amount = 0.0
-    
-    let types = ["Business", "Personal"]
     
     var expenses: Expenses
     
@@ -24,8 +22,9 @@ struct AddView: View {
                 TextField("Name", text: $name)
                 
                 Picker("Type", selection: $type) {
-                    ForEach(types, id: \.self) {
-                        Text($0)
+                    ForEach(ExpenseType.allCases) {
+                        Text($0.rawValue)
+                            .tag($0)
                     }
                 }
                 

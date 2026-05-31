@@ -34,7 +34,7 @@ struct ExpenseRowView: View {
             VStack(alignment: .leading) {
                 Text(item.name)
                     .font(.headline)
-                Text(item.type)
+                Text(item.type.rawValue)
             }
             
             Spacer()
@@ -48,9 +48,9 @@ struct ExpenseRowView: View {
 
 #Preview {
     VStack(spacing: 20) {
-        ExpenseRowView(item: ExpenseItem(name: "Coffee", type: "Personal", amount: 4.0), localCurrency: "USD")
-        ExpenseRowView(item: ExpenseItem(name: "Dinner", type: "Personal", amount: 55.0), localCurrency: "USD")
-        ExpenseRowView(item: ExpenseItem(name: "Flight", type: "Business", amount: 450.0), localCurrency: "USD")
+        ExpenseRowView(item: ExpenseItem(name: "Coffee", type: .business, amount: 4.0), localCurrency: "USD")
+        ExpenseRowView(item: ExpenseItem(name: "Dinner", type: .personal, amount: 55.0), localCurrency: "USD")
+        ExpenseRowView(item: ExpenseItem(name: "Flight", type: .personal, amount: 450.0), localCurrency: "USD")
     }
     .padding()
 

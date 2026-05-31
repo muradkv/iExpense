@@ -10,7 +10,7 @@ import SwiftUI
 struct ExpenseItem: Identifiable, Codable {
     var id = UUID()
     let name: String
-    let type: String
+    let type: ExpenseType
     let amount: Double
 }
 
@@ -28,6 +28,14 @@ class Expenses {
         Locale.current.currency?.identifier ?? "USD"
     }
     
+    var personalItems: [ExpenseItem] {
+        return items.filter { $0.type == .personal }
+    }
+    
+    var businessItems: [ExpenseItem] {
+        return items.filter { $0.type == .business }
+    }
+    
     init() {
         if let savedItems = UserDefaults.standard.data(forKey: "Items") {
             if let decodedItems = try? JSONDecoder().decode([ExpenseItem].self, from: savedItems) {
@@ -38,6 +46,20 @@ class Expenses {
         
         items = []
     }
+    
+    func removePersonalItems(at offsets: IndexSet) {
+        for offset in offsets {
+            let itemToDelete = personalItems[offset]
+            items.removeAll(where: { $0.id == itemToDelete.id })
+        }
+    }
+    
+    func removeBusinessItems(at offsets: IndexSet) {
+        for offset in offsets {
+            let itemToDelete = businessItems[offset]
+            items.removeAll(where: { $0.id == itemToDelete.id })
+        }
+    }
 }
 
 struct ContentView: View {
@@ -47,13 +69,25 @@ struct ContentView: View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(expenses.items) { item in
-                    ExpenseRowView(
-                        item: item,
-                        localCurrency: expenses.localCurrency
-                    )
+                Section("Personal Expenses") {
+                    ForEach(expenses.personalItems) { item in
+                        ExpenseRowView(
+                            item: item,
+                            localCurrency: expenses.localCurrency
+                        )
+                    }
+                    .onDelete(perform: expenses.removePersonalItems)
                 }
-                .onDelete(perform: removeItems)
+                
+                Section("Business Expenses") {
+                    ForEach(expenses.businessItems) { item in
+                        ExpenseRowView(
+                            item: item,
+                            localCurrency: expenses.localCurrency
+                        )
+                    }
+                    .onDelete(perform: expenses.removeBusinessItems)
+                }
             }
             .navigationTitle("iExpense")
             .toolbar {
@@ -65,10 +99,6 @@ struct ContentView: View {
         .sheet(isPresented: $showingAddExpense) {
             AddView(expenses: expenses)
         }
-    }
-    
-    func removeItems(at offsets: IndexSet) {
-        expenses.items.remove(atOffsets: offsets)
     }
 }
 
