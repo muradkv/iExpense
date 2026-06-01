@@ -21,7 +21,9 @@ struct ExpenseListView: View {
                             localCurrency: expenses.localCurrency
                         )
                     }
-                    .onDelete(perform: expenses.removePersonalItems)
+                    .onDelete { offsets in
+                        expenses.removeItems(at: offsets, as: .personal)
+                    }
                 }
                 
                 Section("Business Expenses") {
@@ -31,7 +33,9 @@ struct ExpenseListView: View {
                             localCurrency: expenses.localCurrency
                         )
                     }
-                    .onDelete(perform: expenses.removeBusinessItems)
+                    .onDelete { offsets in
+                        expenses.removeItems(at: offsets, as: .business)
+                    }
                 }
             }
             .navigationTitle("iExpense")

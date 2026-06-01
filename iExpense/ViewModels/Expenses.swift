@@ -40,16 +40,11 @@ class Expenses {
         items = []
     }
     
-    func removePersonalItems(at offsets: IndexSet) {
+    func removeItems(at offsets: IndexSet, as type: ExpenseType) {
+        let currentArray = type == .personal ? personalItems : businessItems
+        
         for offset in offsets {
-            let itemToDelete = personalItems[offset]
-            items.removeAll(where: { $0.id == itemToDelete.id })
-        }
-    }
-    
-    func removeBusinessItems(at offsets: IndexSet) {
-        for offset in offsets {
-            let itemToDelete = businessItems[offset]
+            let itemToDelete = currentArray[offset]
             items.removeAll(where: { $0.id == itemToDelete.id })
         }
     }
