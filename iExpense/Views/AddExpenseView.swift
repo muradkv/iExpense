@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AddView: View {
+struct AddExpenseView: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var name = ""
@@ -44,5 +44,5 @@ struct AddView: View {
 }
 
 #Preview {
-    AddView(expenses: Expenses())
+    AddExpenseView(expenses: Expenses())
 }
