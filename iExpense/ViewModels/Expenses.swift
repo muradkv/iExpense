@@ -9,10 +9,12 @@ import SwiftUI
 
 @Observable
 class Expenses {
-    var items = [ExpenseItem]() {
+    private let saveKeyItems = "Items"
+    
+    private(set) var items = [ExpenseItem]() {
         didSet {
             if let encoded = try? JSONEncoder().encode(items) {
-                UserDefaults.standard.set(encoded, forKey: "Items")
+                UserDefaults.standard.set(encoded, forKey: saveKeyItems)
             }
         }
     }
@@ -30,7 +32,7 @@ class Expenses {
     }
     
     init() {
-        if let savedItems = UserDefaults.standard.data(forKey: "Items") {
+        if let savedItems = UserDefaults.standard.data(forKey: saveKeyItems) {
             if let decodedItems = try? JSONDecoder().decode([ExpenseItem].self, from: savedItems) {
                 items = decodedItems
                 return
@@ -47,5 +49,9 @@ class Expenses {
             let itemToDelete = currentArray[offset]
             items.removeAll(where: { $0.id == itemToDelete.id })
         }
+    }
+    
+    func addItem(_ item: ExpenseItem) {
+        items.append(item)
     }
 }

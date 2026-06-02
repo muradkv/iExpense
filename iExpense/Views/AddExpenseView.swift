@@ -14,7 +14,7 @@ struct AddExpenseView: View {
     @State private var type = ExpenseType.personal
     @State private var amount = 0.0
     
-    var expenses: Expenses
+    let expenses: Expenses
     
     var body: some View {
         NavigationStack {
@@ -35,9 +35,10 @@ struct AddExpenseView: View {
             .toolbar {
                 Button("Save") {
                     let item = ExpenseItem(name: name, type: type, amount: amount)
-                    expenses.items.append(item)
+                    expenses.addItem(item)
                     dismiss()
                 }
+                .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
             }
         }
     }
