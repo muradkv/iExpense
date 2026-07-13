@@ -6,35 +6,53 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ExpenseListView: View {
-    @State private var expenses = Expenses()
+    @Environment(\.modelContext) private var modelContext
+    
+    @Query var items: [ExpenseItem]
+    
+    @State private var viewModel = ExpensesViewModel()
     @State private var showingAddExpense = false
+    
+    private var personalItems: [ExpenseItem] {
+        items.filter { $0.type == .personal }
+    }
+    
+    private var businessItems: [ExpenseItem] {
+        items.filter { $0.type == .business }
+    }
     
     var body: some View {
         NavigationStack {
             List {
-                Section("Personal Expenses") {
-                    ForEach(expenses.personalItems) { item in
-                        ExpenseRowView(
-                            item: item,
-                            localCurrency: expenses.localCurrency
-                        )
-                    }
-                    .onDelete { offsets in
-                        expenses.removeItems(at: offsets, as: .personal)
+                
+                if !personalItems.isEmpty {
+                    Section("Personal Expenses") {
+                        ForEach(personalItems) { item in
+                            ExpenseRowView(
+                                item: item,
+                                localCurrency: viewModel.localCurrency
+                            )
+                        }
+                        .onDelete { offsets in
+                            deleteItems(at: offsets, from: personalItems)
+                        }
                     }
                 }
                 
-                Section("Business Expenses") {
-                    ForEach(expenses.businessItems) { item in
-                        ExpenseRowView(
-                            item: item,
-                            localCurrency: expenses.localCurrency
-                        )
-                    }
-                    .onDelete { offsets in
-                        expenses.removeItems(at: offsets, as: .business)
+                if !businessItems.isEmpty {
+                    Section("Business Expenses") {
+                        ForEach(businessItems) { item in
+                            ExpenseRowView(
+                                item: item,
+                                localCurrency: viewModel.localCurrency
+                            )
+                        }
+                        .onDelete { offsets in
+                            deleteItems(at: offsets, from: businessItems)
+                        }
                     }
                 }
             }
@@ -46,7 +64,14 @@ struct ExpenseListView: View {
             }
         }
         .sheet(isPresented: $showingAddExpense) {
-            AddExpenseView(expenses: expenses)
+            AddExpenseView(viewModel: viewModel)
+        }
+    }
+    
+    private func deleteItems(at offsets: IndexSet, from list: [ExpenseItem]) {
+        for offset in offsets {
+            let item = list[offset]
+            viewModel.delete(item, context: modelContext)
         }
     }
 }

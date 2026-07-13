@@ -13,5 +13,6 @@ struct iExpenseApp: App {
         WindowGroup {
             ExpenseListView()
         }
+        .modelContainer(for: ExpenseItem.self)
     }
 }

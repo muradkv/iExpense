@@ -6,15 +6,17 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct AddExpenseView: View {
     @Environment(\.dismiss) var dismiss
+    @Environment(\.modelContext) private var modelContext
     
     @State private var name = ""
     @State private var type = ExpenseType.personal
     @State private var amount = 0.0
     
-    let expenses: Expenses
+    let viewModel: ExpensesViewModel
     
     var body: some View {
         NavigationStack {
@@ -28,14 +30,14 @@ struct AddExpenseView: View {
                     }
                 }
                 
-                TextField("Amount", value: $amount, format: .currency(code: expenses.localCurrency))
+                TextField("Amount", value: $amount, format: .currency(code: viewModel.localCurrency))
                     .keyboardType(.decimalPad)
             }
             .navigationTitle("Add new expense")
             .toolbar {
                 Button("Save") {
-                    let item = ExpenseItem(name: name, type: type, amount: amount)
-                    expenses.addItem(item)
+                    let newItem = ExpenseItem(name: name, type: type, amount: amount)
+                    viewModel.add(newItem, context: modelContext)
                     dismiss()
                 }
                 .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -45,5 +47,5 @@ struct AddExpenseView: View {
 }
 
 #Preview {
-    AddExpenseView(expenses: Expenses())
+    AddExpenseView(viewModel: ExpensesViewModel())
 }
