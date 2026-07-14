@@ -47,5 +47,9 @@ struct AddExpenseView: View {
 }
 
 #Preview {
-    AddExpenseView(viewModel: ExpensesViewModel())
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: ExpenseItem.self, configurations: config)
+    
+    return AddExpenseView(viewModel: ExpensesViewModel())
+        .modelContainer(container)
 }

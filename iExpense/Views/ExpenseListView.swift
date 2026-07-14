@@ -77,5 +77,17 @@ struct ExpenseListView: View {
 }
 
 #Preview {
-    ExpenseListView()
+    let config = ModelConfiguration(isStoredInMemoryOnly: true)
+    let container = try! ModelContainer(for: ExpenseItem.self, configurations: config)
+    
+    let sample1 = ExpenseItem(name: "Coffee", type: .business, amount: 4.0)
+    let sample2 = ExpenseItem(name: "Dinner", type: .personal, amount: 55.0)
+    let sample3 = ExpenseItem(name: "Dance", type: .personal, amount: 155)
+    
+    container.mainContext.insert(sample1)
+    container.mainContext.insert(sample2)
+    container.mainContext.insert(sample3)
+    
+    return ExpenseListView()
+        .modelContainer(container)
 }
