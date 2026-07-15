@@ -10,68 +10,47 @@ import SwiftData
 
 struct ExpenseListView: View {
     @Environment(\.modelContext) private var modelContext
-    
-    @Query var items: [ExpenseItem]
-    
+        
     @State private var viewModel = ExpensesViewModel()
     @State private var showingAddExpense = false
     
-    private var personalItems: [ExpenseItem] {
-        items.filter { $0.type == .personal }
-    }
-    
-    private var businessItems: [ExpenseItem] {
-        items.filter { $0.type == .business }
-    }
+    @State private var sortOrder = [
+        SortDescriptor(\ExpenseItem.name),
+        SortDescriptor(\ExpenseItem.amount, order: .reverse)
+    ]
     
     var body: some View {
         NavigationStack {
-            List {
-                
-                if !personalItems.isEmpty {
-                    Section("Personal Expenses") {
-                        ForEach(personalItems) { item in
-                            ExpenseRowView(
-                                item: item,
-                                localCurrency: viewModel.localCurrency
-                            )
+            ExpenseSectionListView(sortOrder: sortOrder, viewModel: viewModel)
+                .navigationTitle("iExpense")
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Menu("Sort", systemImage: "arrow.up.arrow.down") {
+                            Picker("Sort Order", selection: $sortOrder) {
+                                Text("Sort by Name")
+                                    .tag([
+                                        SortDescriptor(\ExpenseItem.name),
+                                        SortDescriptor(\ExpenseItem.amount, order: .reverse)
+                                    ])
+                                
+                                Text("Sort by Amount")
+                                    .tag([
+                                        SortDescriptor(\ExpenseItem.amount, order: .reverse),
+                                        SortDescriptor(\ExpenseItem.name)
+                                    ])
+                            }
                         }
-                        .onDelete { offsets in
-                            deleteItems(at: offsets, from: personalItems)
+                    }
+                    
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Add Expense", systemImage: "plus") {
+                            showingAddExpense = true
                         }
                     }
                 }
-                
-                if !businessItems.isEmpty {
-                    Section("Business Expenses") {
-                        ForEach(businessItems) { item in
-                            ExpenseRowView(
-                                item: item,
-                                localCurrency: viewModel.localCurrency
-                            )
-                        }
-                        .onDelete { offsets in
-                            deleteItems(at: offsets, from: businessItems)
-                        }
-                    }
-                }
-            }
-            .navigationTitle("iExpense")
-            .toolbar {
-                Button("Add Expense", systemImage: "plus") {
-                    showingAddExpense = true
-                }
-            }
         }
         .sheet(isPresented: $showingAddExpense) {
             AddExpenseView(viewModel: viewModel)
-        }
-    }
-    
-    private func deleteItems(at offsets: IndexSet, from list: [ExpenseItem]) {
-        for offset in offsets {
-            let item = list[offset]
-            viewModel.delete(item, context: modelContext)
         }
     }
 }
