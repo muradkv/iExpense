@@ -10,7 +10,7 @@ import SwiftData
 
 struct ExpenseListView: View {
     @Environment(\.modelContext) private var modelContext
-        
+    
     @State private var viewModel = ExpensesViewModel()
     @State private var showingAddExpense = false
     
@@ -19,9 +19,15 @@ struct ExpenseListView: View {
         SortDescriptor(\ExpenseItem.amount, order: .reverse)
     ]
     
+    @State private var filter = "All"
+    
     var body: some View {
         NavigationStack {
-            ExpenseSectionListView(sortOrder: sortOrder, viewModel: viewModel)
+            ExpenseSectionListView(
+                sortOrder: sortOrder,
+                filter: filter,
+                viewModel: viewModel
+            )
                 .navigationTitle("iExpense")
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
@@ -38,6 +44,17 @@ struct ExpenseListView: View {
                                         SortDescriptor(\ExpenseItem.amount, order: .reverse),
                                         SortDescriptor(\ExpenseItem.name)
                                     ])
+                            }
+                            
+                            Picker("Filter Category", selection: $filter) {
+                                Text("Show All")
+                                        .tag("All")
+                                    
+                                    Text("Personal Only")
+                                        .tag("Personal")
+                                    
+                                    Text("Business Only")
+                                        .tag("Business")
                             }
                         }
                     }

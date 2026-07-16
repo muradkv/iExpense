@@ -12,11 +12,13 @@ import SwiftData
 final class ExpenseItem {
     var name: String
     var type: ExpenseType
+    var typeName: String
     var amount: Double
     
-    init(name: String, type: ExpenseType, amount: Double) {
+    init(name: String, type: ExpenseType, typeName: String = "All", amount: Double) {
         self.name = name
         self.type = type
         self.amount = amount
+        self.typeName = typeName
     }
 }

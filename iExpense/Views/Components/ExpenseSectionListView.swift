@@ -22,9 +22,24 @@ struct ExpenseSectionListView: View {
         viewModel.businessItems(from: items)
     }
     
-    init(sortOrder: [SortDescriptor<ExpenseItem>], viewModel: ExpensesViewModel) {
-        _items = Query(sort: sortOrder)
+    init(
+        sortOrder: [SortDescriptor<ExpenseItem>],
+        filter: String,
+        viewModel: ExpensesViewModel
+    ) {
+        
         self.viewModel = viewModel
+            
+        let predicate = #Predicate<ExpenseItem> { item in
+                if filter == "All" {
+                    return true
+                } else {
+                    return item.typeName == filter
+                }
+            }
+            
+            _items = Query(filter: predicate, sort: sortOrder)
+        
     }
     
     var body: some View {
@@ -72,6 +87,7 @@ struct ExpenseSectionListView: View {
     
     return ExpenseSectionListView(
         sortOrder: [SortDescriptor(\ExpenseItem.name)],
+        filter: "All",
         viewModel: ExpensesViewModel()
     )
     .modelContainer(container)
