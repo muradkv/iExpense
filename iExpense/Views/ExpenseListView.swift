@@ -11,6 +11,8 @@ import SwiftData
 struct ExpenseListView: View {
     @Environment(\.modelContext) private var modelContext
     
+    @Query var allItems: [ExpenseItem]
+    
     @State private var viewModel = ExpensesViewModel()
     @State private var showingAddExpense = false
     
@@ -23,48 +25,59 @@ struct ExpenseListView: View {
     
     var body: some View {
         NavigationStack {
-            ExpenseSectionListView(
-                sortOrder: sortOrder,
-                filter: filter,
-                viewModel: viewModel
-            )
-                .navigationTitle("iExpense")
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Menu("Sort", systemImage: "arrow.up.arrow.down") {
-                            Picker("Sort Order", selection: $sortOrder) {
-                                Text("Sort by Name")
-                                    .tag([
-                                        SortDescriptor(\ExpenseItem.name),
-                                        SortDescriptor(\ExpenseItem.amount, order: .reverse)
-                                    ])
-                                
-                                Text("Sort by Amount")
-                                    .tag([
-                                        SortDescriptor(\ExpenseItem.amount, order: .reverse),
-                                        SortDescriptor(\ExpenseItem.name)
-                                    ])
-                            }
+            Group {
+                if allItems.isEmpty {
+                    ContentUnavailableView(
+                        "No Expenses",
+                        systemImage: "creditcard.and.123",
+                        description: Text("Tap the plus button to add your first expense tracking.")
+                    )
+                } else {
+                    ExpenseSectionListView(
+                        sortOrder: sortOrder,
+                        filter: filter,
+                        viewModel: viewModel
+                    )
+                }
+            }
+            .navigationTitle("iExpense")
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    Menu("Sort", systemImage: "arrow.up.arrow.down") {
+                        Picker("Sort Order", selection: $sortOrder) {
+                            Text("Sort by Name")
+                                .tag([
+                                    SortDescriptor(\ExpenseItem.name),
+                                    SortDescriptor(\ExpenseItem.amount, order: .reverse)
+                                ])
                             
-                            Picker("Filter Category", selection: $filter) {
-                                Text("Show All")
-                                        .tag("All")
-                                    
-                                    Text("Personal Only")
-                                        .tag("Personal")
-                                    
-                                    Text("Business Only")
-                                        .tag("Business")
-                            }
+                            Text("Sort by Amount")
+                                .tag([
+                                    SortDescriptor(\ExpenseItem.amount, order: .reverse),
+                                    SortDescriptor(\ExpenseItem.name)
+                                ])
+                        }
+                        
+                        Picker("Filter Category", selection: $filter) {
+                            Text("Show All")
+                                .tag("All")
+                            
+                            Text("Personal Only")
+                                .tag("Personal")
+                            
+                            Text("Business Only")
+                                .tag("Business")
                         }
                     }
-                    
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button("Add Expense", systemImage: "plus") {
-                            showingAddExpense = true
-                        }
+                    .disabled(allItems.isEmpty)
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Add Expense", systemImage: "plus") {
+                        showingAddExpense = true
                     }
                 }
+            }
         }
         .sheet(isPresented: $showingAddExpense) {
             AddExpenseView(viewModel: viewModel)
