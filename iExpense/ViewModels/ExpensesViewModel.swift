@@ -22,14 +22,23 @@ final class ExpensesViewModel {
         items.filter { $0.type == .business }
     }
     
-    func add(_ item: ExpenseItem, context: ModelContext) {
-        context.insert(item)
-    }
-    
     func deleteItems(at offsets: IndexSet, from list: [ExpenseItem], context: ModelContext) {
         for offset in offsets {
             let itemToDelete = list[offset]
             context.delete(itemToDelete)
         }
+        
+        try? context.save()
+    }
+    
+    func add(name: String, type: ExpenseType, amount: Double, context: ModelContext) {
+        let newItem = ExpenseItem(
+            name: name,
+            type: type,
+            typeName: type.rawValue,
+            amount: amount
+        )
+        context.insert(newItem)
+        try? context.save()
     }
 }

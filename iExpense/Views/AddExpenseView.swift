@@ -36,8 +36,12 @@ struct AddExpenseView: View {
             .navigationTitle("Add new expense")
             .toolbar {
                 Button("Save") {
-                    let newItem = ExpenseItem(name: name, type: type, typeName: type.rawValue, amount: amount)
-                    viewModel.add(newItem, context: modelContext)
+                    viewModel.add(
+                        name: name,
+                        type: type,
+                        amount: amount,
+                        context: modelContext
+                    )
                     dismiss()
                 }
                 .disabled(name.trimmingCharacters(in: .whitespaces).isEmpty)
