@@ -27,48 +27,35 @@ struct ExpenseSectionListView: View {
         filter: String,
         viewModel: ExpensesViewModel
     ) {
-        
         self.viewModel = viewModel
-            
-        let predicate = #Predicate<ExpenseItem> { item in
-                if filter == "All" {
-                    return true
-                } else {
-                    return item.typeName == filter
-                }
-            }
-            
-            _items = Query(filter: predicate, sort: sortOrder)
         
+        let predicate = #Predicate<ExpenseItem> { item in
+            if filter == "All" {
+                return true
+            } else {
+                return item.typeName == filter
+            }
+        }
+        
+        _items = Query(filter: predicate, sort: sortOrder)
     }
     
     var body: some View {
         List {
-            if !personalItems.isEmpty {
-                Section("Personal Expenses") {
-                    ForEach(personalItems) { item in
-                        ExpenseRowView(
-                            item: item,
-                            localCurrency: viewModel.localCurrency
-                        )
-                    }
-                    .onDelete { offsets in
-                        viewModel.deleteItems(at: offsets, from: personalItems, context: modelContext)
-                    }
+            expenseSection(title: "Personal Expenses", for: personalItems)
+            expenseSection(title: "Business Expenses", for: businessItems)
+        }
+    }
+    
+    @ViewBuilder
+    private func expenseSection(title: String, for filteredItems: [ExpenseItem]) -> some View {
+        if !filteredItems.isEmpty {
+            Section(title) {
+                ForEach(filteredItems) { item in
+                    ExpenseRowView(item: item, localCurrency: viewModel.localCurrency)
                 }
-            }
-            
-            if !businessItems.isEmpty {
-                Section("Business Expenses") {
-                    ForEach(businessItems) { item in
-                        ExpenseRowView(
-                            item: item,
-                            localCurrency: viewModel.localCurrency
-                        )
-                    }
-                    .onDelete { offsets in
-                        viewModel.deleteItems(at: offsets, from: businessItems, context: modelContext)
-                    }
+                .onDelete { offsets in
+                    viewModel.deleteItems(at: offsets, from: filteredItems, context: modelContext)
                 }
             }
         }
