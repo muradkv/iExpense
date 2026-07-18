@@ -17,11 +17,17 @@ The app allows users to quickly add expenses, categorizes them automatically, fo
 
 ## Features
 
-* **Smart Categorization:** Expenses are automatically grouped into "Personal" and "Business" sections within the list.
-* **Persistent Storage:** Data is saved instantly and seamlessly in the background using `UserDefaults`.
-* **Dynamic Styling:** Visual hierarchy highlights significant expenses (e.g., amounts over $100 are bold and colored red) for quick scannability.
-* **Locale-Aware Formatting:** Currency is dynamically formatted based on the user's system region and language settings.
-* **List Management:** Intuitive swipe-to-delete functionality with safe item removal.
+### Core Capabilities (v1.0.0+ Baseline)
+* **Smart Categorization:** Expenses are automatically grouped into distinct "Personal" and "Business" sections within the list interface.
+* **Dynamic Styling:** Visual hierarchy automatically highlights significant expenses (e.g., amounts over $100 are bold and colored red) for quick scannability.
+* **Locale-Aware Formatting:** Prices and currency markers are dynamically formatted based on the user's active device region and system language.
+* **Safe Swipe-Deletion:** Features responsive swipe-to-delete interaction, resolving internal index mismatch bugs via strict UUID tracking.
+
+### Advanced Data Management (v2.0.0+ SwiftData Upgrade)
+* **Persistent SQLite Storage:** Replaced volatile file persistence with a high-performance local SQLite database handled natively by `SwiftData`.
+* **Runtime List Sorting:** Users can instantly reorder the main timeline by expense Name or numeric Amount directly via toolbar interactions.
+* **Contextual Predicate Filtering:** Implemented rapid database-level category switches ('All', 'Personal Only', 'Business Only') without loading unnecessary objects into memory.
+* **Native Empty State UX:** Integrates `ContentUnavailableView` placeholders that dynamically instruct the user when the entry tracking log is empty.
 
 ## About the Project & Challenge
 
@@ -35,4 +41,29 @@ Beyond the core tutorial, the codebase underwent architectural refactoring to ma
 * **Type Safety & Encapsulation:** Replaced "stringly-typed" categories with an `ExpenseType` Enum (`CaseIterable`, `Identifiable`, `Codable`). Applied `private(set)` access modifiers to protect data integrity from unintended UI mutations.
 * **Safe Deletion Logic:** Resolved the filtered-list index mismatch bug by implementing deletion based on unique `UUID`s rather than temporary UI offsets.
 
-🔗 **[Full project description here](https://www.hackingwithswift.com/100/swiftui/36)**
+Later, the project was upgraded during **Project 12 (Days 57-59)** to completely migrate the persistence layer to `SwiftData` and complete three advanced database challenges:
+1. **Dynamic Sorting:** Implemented toolbar-driven sorting options allowing users to sort expenses by Name or Amount at runtime.
+2. **Dynamic Filtering:** Added category filter selectors to display 'All', 'Personal Only', or 'Business Only' records.
+3. **Database Architecture:** Resolved engine limitations of macro `#Predicate` with custom string-based model properties to filter rows efficiently.
+
+Beyond the tutorial curriculum, the codebase underwent architectural refactoring to master clean MVVM design and robust error handling in SwiftData context operations.
+
+🔗 **Original Project:** [Project 7 Description](https://www.hackingwithswift.com/100/swiftui/36)  
+🔗 **SwiftData Upgrade:** [Project 12 Challenges](https://www.hackingwithswift.com/books/ios-swiftui/swiftdata-wrap-up)
+
+## Project Versioning & Changelog
+
+**v2.1.0 (Clean Architecture & Layout Polish)** — commit: `01e920c`  
+Moved model instantiating from AddExpenseView into the ViewModel. Replaced duplicate layout structures with a single `@ViewBuilder` helper. Fixed data synchronization bugs with forced model context saves and integrated `ContentUnavailableView` placeholders.
+
+**v2.0.0 (SwiftData Engine Integration)** — commit: `1f5ee77`  
+Major data layer modernization. Replaced UserDefaults with SwiftData engine by transforming ExpenseItem into a `@Model` class. Created a dynamic subview initialization flow to manage dynamic sorting and macro `#Predicate` category filtering.
+
+**v1.2.0 (MVVM & Type Safety Refactoring)** — commit: `9f41d2a`  
+Refactored the codebase to follow clean MVVM principles. Removed loose properties from views, replaced stringly-typed categories with a type-safe `ExpenseType` enum, unified array deletion hooks, and reorganised the folder layout.
+
+**v1.1.0 (Section Split & Dynamic Styling)** — commit: `e87da9e`  
+Split the expense list layout into distinct Personal and Business sections. Extracted view rows into a modular `ExpenseRowView` component and added dynamic text styling to highlight costs above $10 and $100 thresholds.
+
+**v1.0.0 (Functional MVP baseline)** — commit: `62c84e3`  
+Initial baseline implementation of the core course curriculum. Designed base user interfaces with ContentView and AddView sheets, supported local system region currency formatting, and implemented data persistence via `UserDefaults` with JSON encoders.
