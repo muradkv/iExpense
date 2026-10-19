@@ -28,6 +28,7 @@ The app allows users to quickly add expenses, categorizes them automatically, fo
 * **Runtime List Sorting:** Users can instantly reorder the main timeline by expense Name or numeric Amount directly via toolbar interactions.
 * **Contextual Predicate Filtering:** Implemented rapid database-level category switches ('All', 'Personal Only', 'Business Only') without loading unnecessary objects into memory.
 * **Native Empty State UX:** Integrates `ContentUnavailableView` placeholders that dynamically instruct the user when the entry tracking log is empty.
+* **VoiceOver Accessibility:** Grouped expense rows announce the item name and localized currency amount in a single swipe, followed by the expense category as an accessibility hint.
 
 ## About the Project & Challenge
 
@@ -46,12 +47,18 @@ Later, the project was upgraded during **Project 12 (Days 57-59)** to completely
 2. **Dynamic Filtering:** Added category filter selectors to display 'All', 'Personal Only', or 'Business Only' records.
 3. **Database Architecture:** Resolved engine limitations of macro `#Predicate` with custom string-based model properties to filter rows efficiently.
 
+Finally, during **Project 15 (Day 76 — Accessibility)**, `ExpenseRowView` was enhanced for screen readers by combining each row into a single accessibility element that announces the expense name and formatted currency value in one `.accessibilityLabel` while exposing the category type via `.accessibilityHint`.
+
 Beyond the tutorial curriculum, the codebase underwent architectural refactoring to master clean MVVM design and robust error handling in SwiftData context operations.
 
 🔗 **Original Project:** [Project 7 Description](https://www.hackingwithswift.com/100/swiftui/36)  
 🔗 **SwiftData Upgrade:** [Project 12 Challenges](https://www.hackingwithswift.com/books/ios-swiftui/swiftdata-wrap-up)
+🔗 **Accessibility Upgrade:** [Project 15 Challenges (Day 76)](https://www.hackingwithswift.com/100/swiftui/76)
 
 ## Project Versioning & Changelog
+
+**v2.2.0 (VoiceOver Accessibility Integration)** — commit: `144c22a`  
+Completed the Day 76 accessibility challenge. Grouped `ExpenseRowView` elements into a single VoiceOver element that reads out the expense name and locale-formatted currency amount in one label, and provides the expense category (`Personal` or `Business`) as a hint.
 
 **v2.1.0 (Clean Architecture & Layout Polish)** — commit: `01e920c`  
 Moved model instantiating from AddExpenseView into the ViewModel. Replaced duplicate layout structures with a single `@ViewBuilder` helper. Fixed data synchronization bugs with forced model context saves and integrated `ContentUnavailableView` placeholders.
