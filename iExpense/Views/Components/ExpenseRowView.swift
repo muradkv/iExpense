@@ -43,6 +43,9 @@ struct ExpenseRowView: View {
                 .foregroundStyle(amountColor)
                 .font(amountFont)
         }
+        .accessibilityElement()
+        .accessibilityLabel("\(item.name), \(item.amount, format: .currency(code: localCurrency))")
+        .accessibilityHint(item.type.rawValue)
     }
 }
 
@@ -53,5 +56,5 @@ struct ExpenseRowView: View {
         ExpenseRowView(item: ExpenseItem(name: "Flight", type: .personal, amount: 450.0), localCurrency: "USD")
     }
     .padding()
-
+    
 }
